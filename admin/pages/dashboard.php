@@ -315,7 +315,7 @@ $belumDitentukan = $stats['medali_distribusi']['belum_ditentukan'] ?? 0;
             </div>
           </div>
         </div>
-        <h6 class="text-muted font-weight-normal">Total Medali</h6>
+        <h6 class="text-muted font-weight-normal">Total Medaldsadsai</h6>
       </div>
     </div>
   </div>
