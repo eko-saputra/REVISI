@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
+  <meta name="robots" content="noindex" />
+  <link rel="shortcut icon" href="../../assets/img/LogoIPSI.png" />
+  <link rel="stylesheet prefetch" href="../../assets/bootstrap/dist/css/bootstrap.min.css" />
+  <style>
+    #openfull,
+    #exitfull {
+      background: 0 0;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+      text-align: center;
+      width: 30px;
+      height: 55px;
+      line-height: 55px;
+      float: left;
+    }
+
+    #openfull:active,
+    #exitfull:active,
+    #openfull:focus,
+    #exitfull:focus {
+      outline: 0;
+    }
+
+    #openfull svg,
+    #exitfull svg {
+      vertical-align: middle;
+    }
+
+    #exitfull {
+      display: none;
+    }
+
+    .button-active {
+      background-color: #198754 !important;
+      color: white !important;
+      border-color: #198754 !important;
+    }
+  </style>
+
+  <title>DEWAN - IPSI Kota Dumai</title>
+</head>
+
+<body class="bg-dark">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col">
+        <table width="100%" class="table">
+          <tr>
+            <td class="text-uppercase fw-bold text-center bg-dark bg-gradient rounded-4 text-white" colspan="3">
+              <b id="juri"></b> ( Gelanggang : <b id="gelanggang"></b>)
+            </td>
+          </tr>
+          <tr>
+            <td class="text-uppercase text-primary fw-bold bg-dark bg-gradient" width="40%">
+              <h5 class="nm_biru border border-primary bg-light p-2 rounded shadow-sm"></h5>
+              <h6 class="kontingen_biru text-white"></h6>
+            </td>
+            <td class="text-uppercase text-center bg-secondary bg-gradient" width="20%">
+              <!-- Wrapper untuk center -->
+              <div class="d-flex justify-content-center align-items-center">
+                <!-- Konten yang sebelumnya -->
+                <div class="d-flex flex-column align-items-center">
+                  <div class="mt-3">
+                    <b id="timer" style="
+                          font-size: 17px;
+                          font-weight: bold;
+                          background-color: black;
+                          color: white;
+                          padding: 5px;
+                          border: 5px solid #2d2d2d;
+                        ">⏱️ 00:00</b>
+                  </div>
+                  <div class="d-flex align-items-center gap-2">
+                    <button aria-label="Open Fullscreen" id="openfull" onclick="openFullscreen();" class="btn p-0">
+                      <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path fill="#2d2d2d"
+                          d="M5,5H10V7H7V10H5V5M14,5H19V10H17V7H14V5M17,14H19V19H14V17H17V14M10,17V19H5V14H7V17H10Z" />
+                      </svg>
+                    </button>
+                    <button aria-label="Exit Fullscreen" id="exitfull" onclick="closeFullscreen();" class="btn p-0">
+                      <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path fill="#2d2d2d"
+                          d="M14,14H19V16H16V19H14V14M5,14H10V19H8V16H5V14M8,5H10V10H5V8H8V5M19,8V10H14V5H16V8H19Z" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div class="d-flex gap-2 mt-2">
+                    <button class="btn btn-danger bg-gradient btn-sm keluar small" onclick="keluar()">
+                      Keluar
+                    </button>
+                    <a href="penilaian.html" class="btn btn-light border border-1 btn-sm reload-btn">
+                      Refresh
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="text-uppercase text-danger fw-bold text-end bg-dark bg-gradient" width="40%">
+              <h5 class="nm_merah border border-danger bg-light p-2 rounded shadow-sm"></h5>
+              <h6 class="kontingen_merah text-white"></h6>
+            </td>
+          </tr>
+        </table>
+        <table class="table shadow" width="100%">
+          <thead>
+            <tr>
+              <td width="10%" class="bg-primary text-white text-center">
+                <small>TEGURAN</small>
+              </td>
+              <td width="10%" class="bg-primary text-white text-center">
+                <small>PERINGATAN</small>
+              </td>
+              <td width="10%" class="bg-primary text-white text-center">
+                <small>BINAAN</small>
+              </td>
+              <td width="10%" class="bg-primary text-white text-center">
+                <small>JATUHAN</small>
+              </td>
+              <td width="20%" class="text-center fw-bold bg-secondary text-light">
+                Round
+              </td>
+              <td width="10%" class="bg-danger text-white text-center">
+                <small>JATUHAN</small>
+              </td>
+              <td width="10%" class="bg-danger text-white text-center">
+                <small>BINAAN</small>
+              </td>
+              <td width="10%" class="bg-danger text-white text-center">
+                <small>PERINGATAN</small>
+              </td>
+              <td width="10%" class="bg-danger text-white text-center">
+                <small>TEGURAN</small>
+              </td>
+            </tr>
+          </thead>
+          <tbody id="tbody-babak">
+            <!-- baris babak akan di-generate disini -->
+          </tbody>
+        </table>
+
+        <div class="container-fluid">
+          <div class="row text-center mb-3">
+            <!-- BIRU -->
+            <div class="col-2">
+              <!-- Jatuhan & Binaan BIRU -->
+              <button
+                class="btn btn-primary bg-gradient py-3 rounded-5 fw-bold w-100 mb-2 button_nilai border border-5 border-dark"
+                onclick="button_nilai('1','BIRU')">
+                <b>JATUHAN</b>
+              </button>
+              <button
+                class="btn btn-primary bg-gradient py-3 rounded-5 fw-bold w-100 button_nilai border border-5 border-dark"
+                onclick="button_nilai('2','BIRU')">
+                <b>BINAAN</b>
+              </button>
+            </div>
+
+            <div class="col-1">
+              <!-- Peringatan I–III BIRU -->
+              <button
+                class="btn btn-primary bg-gradient p-2 m-1 rounded-5 fw-bold w-100 button_nilai border border-5 border-dark"
+                onclick="button_nilai('5','BIRU')">
+                P1
+              </button>
+              <button
+                class="btn btn-primary bg-gradient p-2 m-1 rounded-5 fw-bold w-100 button_nilai border border-5 border-dark"
+                onclick="button_nilai('6','BIRU')">
+                P2
+              </button>
+              <button
+                class="btn btn-primary bg-gradient p-2 m-1 rounded-5 fw-bold w-100 button_nilai border border-5 border-dark"
+                onclick="button_nilai('7','BIRU')">
+                X
+              </button>
+            </div>
+
+            <div class="col-1">
+              <!-- Teguran I & II BIRU -->
+              <button
+                class="btn btn-primary bg-gradient p-2 m-1 small rounded-5 fw-bold w-100 button_nilai border border-5 border-dark"
+                onclick="button_nilai('3','BIRU')">
+                T1
+              </button>
+              <button
+                class="btn btn-primary bg-gradient p-2 m-1 rounded-5 fw-bold w-100 button_nilai border border-5 border-dark"
+                onclick="button_nilai('4','BIRU')">
+                T2
+              </button>
+            </div>
+
+
+            <div class="col-2">
+              <!-- Hapus BIRU + Verifikasi -->
+              <div class="">
+                <button
+                  class="btn btn-primary bg-gradient p-2 rounded-5 fw-bold hapus-skor button_nilai border border-5 border-dark"
+                  onclick="button_hapus('BIRU')" data-sudut="BIRU">
+                  <img src="../../assets/img/trash.png" width="25" />
+                </button>
+                <br /><br />
+                <button type="button"
+                  class="btn btn-warning bg-gradient rounded-5 py-3 my-0 verifikasi border border-5 border-dark fw-bold"
+                  data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  VERIFIKASI
+                </button>
+              </div>
+            </div>
+
+            <div class="col-2">
+              <!-- Hapus MERAH + Pemenang -->
+              <div class="">
+                <button class="btn btn-danger bg-gradient p-2 rounded-5 fw-bold hapus-skor border border-5 border-dark"
+                  onclick="button_hapus('MERAH')" data-sudut="MERAH">
+                  <img src="../../assets/img/trash.png" width="25" />
+                </button>
+                <br /><br />
+                <button
+                  class="btn btn-success text-light bg-gradient my-0 rounded-5 py-3 pemenang border border-5 border-dark fw-bold"
+                  data-bs-toggle="modal" data-bs-target="#pemenangModal">
+                  PEMENANG
+                </button>
+              </div>
+            </div>
+
+            <div class="col-1">
+              <!-- Teguran I & II MERAH -->
+              <button
+                class="btn btn-danger bg-gradient p-2 m-1 rounded-5 fw-bold w-100 button_nilai border border-5 border-dark"
+                onclick="button_nilai('3','MERAH')">
+                T1
+              </button>
+              <button
+                class="btn btn-danger bg-gradient p-2 m-1 rounded-5 fw-bold w-100 button_nilai border border-5 border-dark"
+                onclick="button_nilai('4','MERAH')">
+                T2
+              </button>
+            </div>
+
+            <div class="col-1">
+              <!-- Peringatan I–III MERAH -->
+              <button
+                class="btn btn-danger bg-gradient p-2 m-1 rounded-5 fw-bold w-100 button_nilai border border-5 border-dark"
+                onclick="button_nilai('5','MERAH')">
+                P1
+              </button>
+              <button
+                class="btn btn-danger bg-gradient p-2 m-1 rounded-5 fw-bold w-100 button_nilai border border-5 border-dark"
+                onclick="button_nilai('6','MERAH')">
+                P2
+              </button>
+              <button
+                class="btn btn-danger bg-gradient p-2 m-1 rounded-5 fw-bold w-100 button_nilai border border-5 border-dark"
+                onclick="button_nilai('7','MERAH')">
+                X
+              </button>
+            </div>
+
+            <!-- MERAH -->
+            <div class="col-2">
+              <!-- Jatuhan & Binaan MERAH -->
+              <button
+                class="btn btn-danger bg-gradient py-3 rounded-5 fw-bold w-100 mb-2 button_nilai border border-5 border-dark"
+                onclick="button_nilai('1','MERAH')">
+                <b>JATUHAN</b>
+              </button>
+              <button
+                class="btn btn-danger bg-gradient py-3 rounded-5 fw-bold w-100 button_nilai border border-5 border-dark"
+                onclick="button_nilai('2','MERAH')">
+                <b>BINAAN</b>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h6 class="text-center text-uppercase fw-bold">Verifikasi Juri</h6>
+          <div class="row">
+            <div class="col text-center bg-primary bg-gradient pt-2">
+              <h6 class="text-white">BIRU</h6>
+            </div>
+            <div class="col text-center bg-danger bg-gradient pt-2">
+              <h6 class="text-white">MERAH</h6>
+            </div>
+            <div class="col text-center bg-warning bg-gradient pt-2">
+              <h6 class="text-dark">TIDAK SAH</h6>
+            </div>
+          </div>
+          <div class="row border" id="verifikasi-row">
+            <div class="col text-center bg-light bg-gradient border" id="verifikasi-biru"></div>
+            <div class="col text-center bg-light bg-gradient border" id="verifikasi-merah"></div>
+            <div class="col text-center bg-light bg-gradient border" id="verifikasi-netral"></div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <!-- Tombol Dewan (awalnya disembunyikan) -->
+              <div id="dewan-actions" class="text-center mt-3" style="display: none">
+                <h6 id="judul_keputusan"></h6>
+                <hr />
+                <button class="btn btn-primary me-2" onclick="putusanDewan('BIRU')">
+                  BIRU
+                </button>
+                <button class="btn btn-danger me-2" onclick="putusanDewan('MERAH')">
+                  MERAH
+                </button>
+                <button class="btn btn-warning text-dark" onclick="putusanDewan('NETRAL')">
+                  TIDAK SAH
+                </button>
+                <!-- <button type="button" class="btn btn-info p-3 tutup" data-bs-dismiss="modal" data-jenis="tutup">Selesai,
+                  dan
+                  beri keputusan!</button> -->
+              </div>
+            </div>
+          </div>
+
+          <style>
+            /* Pastikan container tombol relatif untuk overlay */
+            .verif-container {
+              position: relative;
+              margin-bottom: 2rem;
+            }
+
+            .verif-overlay {
+              display: none;
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: rgba(255, 255, 255, 0.9);
+              z-index: 10;
+              align-items: center;
+              justify-content: center;
+              flex-direction: column;
+              text-align: center;
+            }
+
+            .verif-overlay.show {
+              display: flex;
+            }
+
+            .verif-overlay .status-text {
+              font-weight: bold;
+              margin-bottom: 0.5rem;
+            }
+
+            .verif-overlay .btn-batal {
+              margin-top: 0.5rem;
+            }
+          </style>
+
+          <div class="verif-container">
+            <div class="my-5 text-center">
+              <button class="btn btn-secondary text-white fw-bold p-3 tombol-send w-100" data-jenis="jatuhan">
+                Kirim Verifikasi Jatuhan
+              </button>
+            </div>
+            <div class="my-5 text-center">
+              <button class="btn btn-secondary text-white fw-bold p-3 tombol-send w-100" data-jenis="pelanggaran">
+                Kirim Verifikasi Pelanggaran
+              </button>
+            </div>
+
+            <!-- Overlay untuk status -->
+            <div id="verifOverlay" class="verif-overlay bg-dark text-light">
+              <div class="status-text" id="verifStatusContainer">
+                <!-- Spinner besar -->
+                <div class="spinner-border spinner-border-lg text-light mb-3" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <!-- Teks status -->
+                <h1 id="verifStatus">Mengirim…</h1>
+              </div>
+              <button id="verifCancel" class="btn btn-link btn-sm btn-batal">
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary tutup" data-bs-dismiss="modal" data-jenis="tutup">
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="pemenangModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header bg-dark bg-gradient">
+          <marquee behavior="" direction="">
+            <h3 class="modal-title fw-bold text-center text-light" id="exampleModalLabel">
+              PENENTUAN PEMENANG
+            </h3>
+          </marquee>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body bg-dark">
+          <h5 class="text-center text-uppercase fw-bold">
+            PENENTUAN PEMENANG
+          </h5>
+          <div class="container-fluid">
+            <div class="row">
+              <!-- SUDUT BIRU -->
+              <div class="col text-center">
+                <table class="table text-center">
+                  <thead class="table-primary">
+                    <tr>
+                      <th colspan="2" class="bg-primary text-light text-uppercase">
+                        Sudut Biru
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="text-start fw-bold text-uppercase">
+                        Pukulan
+                      </td>
+                      <td id="pukulan_biru"></td>
+                    </tr>
+                    <tr>
+                      <td class="text-start fw-bold text-uppercase">
+                        Tendangan
+                      </td>
+                      <td id="tendangan_biru"></td>
+                    </tr>
+                    <tr>
+                      <td class="text-start fw-bold text-uppercase">
+                        Jatuhan
+                      </td>
+                      <td id="jatuhan_biru"></td>
+                    </tr>
+                    <tr>
+                      <td class="text-start fw-bold text-uppercase">
+                        Binaan
+                      </td>
+                      <td id="binaan_biru"></td>
+                    </tr>
+                    <tr>
+                      <td class="text-start fw-bold text-uppercase">
+                        Teguran 1
+                      </td>
+                      <td id="teguran1_biru"></td>
+                    </tr>
+                    <tr>
+                      <td class="text-start fw-bold text-uppercase">
+                        Teguran 2
+                      </td>
+                      <td id="teguran2_biru"></td>
+                    </tr>
+                    <tr>
+                      <td class="text-start fw-bold text-uppercase">
+                        Peringatan 1
+                      </td>
+                      <td id="peringatan1_biru"></td>
+                    </tr>
+                    <tr>
+                      <td class="text-start fw-bold text-uppercase">
+                        Peringatan 2
+                      </td>
+                      <td id="peringatan2_biru"></td>
+                    </tr>
+                    <tr class="table-primary">
+                      <td id="nilai_akhir_biru" colspan="2" class="fw-bold text-primary" style="font-size: 70px"></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <button class="btn btn-primary bg-gradient p-5 my-3 winner-biru" onclick="set_winner('biru')">
+                  🏆
+                  <h1>WINNER</h1>
+                </button>
+              </div>
+
+              <!-- SUDUT MERAH -->
+              <div class="col text-center">
+                <table class="table text-center">
+                  <thead class="table-danger">
+                    <tr>
+                      <th colspan="2" class="bg-danger text-light text-uppercase">
+                        Sudut Merah
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td id="pukulan_merah"></td>
+                      <td class="text-end fw-bold text-uppercase">Pukulan</td>
+                    </tr>
+                    <tr>
+                      <td id="tendangan_merah"></td>
+                      <td class="text-end fw-bold text-uppercase">
+                        Tendangan
+                      </td>
+                    </tr>
+                    <tr>
+                      <td id="jatuhan_merah"></td>
+                      <td class="text-end fw-bold text-uppercase">Jatuhan</td>
+                    </tr>
+                    <tr>
+                      <td id="binaan_merah"></td>
+                      <td class="text-end fw-bold text-uppercase">Binaan</td>
+                    </tr>
+                    <tr>
+                      <td id="teguran1_merah"></td>
+                      <td class="text-end fw-bold text-uppercase">
+                        Teguran 1
+                      </td>
+                    </tr>
+                    <tr>
+                      <td id="teguran2_merah"></td>
+                      <td class="text-end fw-bold text-uppercase">
+                        Teguran 2
+                      </td>
+                    </tr>
+                    <tr>
+                      <td id="peringatan1_merah"></td>
+                      <td class="text-end fw-bold text-uppercase">
+                        Peringatan 1
+                      </td>
+                    </tr>
+                    <tr>
+                      <td id="peringatan2_merah"></td>
+                      <td class="text-end fw-bold text-uppercase">
+                        Peringatan 2
+                      </td>
+                    </tr>
+                    <tr class="table-danger">
+                      <td id="nilai_akhir_merah" class="fw-bold text-danger" colspan="2" style="font-size: 70px"></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <button class="btn btn-danger bg-gradient p-5 my-3 winner-merah" onclick="set_winner('merah')">
+                  🏆
+                  <h1>WINNER</h1>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="../../assets/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="../../assets/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const id_juri = localStorage.getItem("juri");
+    const id_partai = localStorage.getItem("partai");
+    let babak_active = localStorage.getItem("babak");
+
+    $(".nama_juri").html(localStorage.getItem("nama_juri"));
+
+    $(".keluar").on("click", function () {
+      localStorage.clear();
+      document.location.href =
+        "http://192.168.30.254/skordigital/tanding/dewan";
+    });
+
+    if (localStorage.getItem("is_login") < 1) {
+      localStorage.clear();
+      document.location.href =
+        "http://192.168.30.254/skordigital/tanding/dewan";
+    }
+
+    const elem = document.documentElement;
+
+    window.openFullscreen = function () {
+      if (elem.requestFullscreen) elem.requestFullscreen();
+      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+      $("#openfull").hide();
+      $("#exitfull").show();
+    };
+
+    window.closeFullscreen = function () {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      $("#openfull").show();
+      $("#exitfull").hide();
+    };
+
+    function updatePartaiUI(data) {
+      if (data.status != "kosong") {
+        $("#gelanggang").html(
+          "| Gelanggang : " + data.gelanggang + " - " + data.partai
+        );
+        window.localStorage.setItem("partai", data.partai);
+        window.localStorage.setItem("bbk", data.bbk);
+        $(".nm_merah").html(data.nm_merah);
+        $(".nm_biru").html(data.nm_biru);
+        $(".kontingen_merah").html(data.kontingen_merah);
+        $(".kontingen_biru").html(data.kontingen_biru);
+        renderHistory();
+
+        // babakUI(localStorage.getItem('babak'));
+      } else {
+        $("#gelanggang").html("| Gelanggang :  - ");
+        $(".nm_merah").html("");
+        $(".nm_biru").html("");
+        $(".kontingen_merah").html("");
+        $(".kontingen_biru").html("");
+        // BABAK 1
+        $(".history-teguran1-biru1").html("");
+        $(".history-teguran2-biru1").html("");
+        $(".history-peringatan1-biru1").html("");
+        $(".history-peringatan2-biru1").html("");
+        $(".history-peringatan3-biru1").html("");
+        $(".history-binaan-biru1").html("");
+        $(".history-jatuhan-biru1").html("");
+        $(".history-jatuhan-merah1").html("");
+        $(".history-binaan-merah1").html("");
+        $(".history-peringatan1-merah1").html("");
+        $(".history-peringatan2-merah1").html("");
+        $(".history-peringatan3-merah1").html("");
+        $(".history-teguran1-merah1").html("");
+        $(".history-teguran2-merah1").html("");
+
+        // BABAK 2
+        $(".history-teguran1-biru2").html("");
+        $(".history-teguran2-biru2").html("");
+        $(".history-peringatan1-biru2").html("");
+        $(".history-peringatan2-biru2").html("");
+        $(".history-peringatan3-biru2").html("");
+        $(".history-binaan-biru2").html("");
+        $(".history-jatuhan-biru2").html("");
+        $(".history-jatuhan-merah2").html("");
+        $(".history-binaan-merah2").html("");
+        $(".history-peringatan1-merah2").html("");
+        $(".history-peringatan2-merah2").html("");
+        $(".history-peringatan3-merah2").html("");
+        $(".history-teguran1-merah2").html("");
+        $(".history-teguran2-merah2").html("");
+
+        // BABAK 3
+        $(".history-teguran1-biru3").html("");
+        $(".history-teguran2-biru3").html("");
+        $(".history-peringatan1-biru3").html("");
+        $(".history-peringatan2-biru3").html("");
+        $(".history-peringatan3-biru3").html("");
+        $(".history-binaan-biru3").html("");
+        $(".history-jatuhan-biru3").html("");
+        $(".history-jatuhan-merah3").html("");
+        $(".history-binaan-merah3").html("");
+        $(".history-peringatan1-merah3").html("");
+        $(".history-peringatan2-merah3").html("");
+        $(".history-peringatan3-merah3").html("");
+        $(".history-teguran1-merah3").html("");
+        $(".history-teguran2-merah3").html("");
+        // BABAK 1
+        $(".history-teguran1-biru1").html("");
+        $(".history-teguran2-biru1").html("");
+        $(".history-peringatan1-biru1").html("");
+        $(".history-peringatan2-biru1").html("");
+        $(".history-peringatan3-biru1").html("");
+        $(".history-binaan-biru1").html("");
+        $(".history-jatuhan-biru1").html("");
+        $(".history-jatuhan-merah1").html("");
+        $(".history-binaan-merah1").html("");
+        $(".history-peringatan1-merah1").html("");
+        $(".history-peringatan2-merah1").html("");
+        $(".history-peringatan3-merah1").html("");
+        $(".history-teguran1-merah1").html("");
+        $(".history-teguran2-merah1").html("");
+
+        // BABAK 2
+        $(".history-teguran1-biru2").html("");
+        $(".history-teguran2-biru2").html("");
+        $(".history-peringatan1-biru2").html("");
+        $(".history-peringatan2-biru2").html("");
+        $(".history-peringatan3-biru2").html("");
+        $(".history-binaan-biru2").html("");
+        $(".history-jatuhan-biru2").html("");
+        $(".history-jatuhan-merah2").html("");
+        $(".history-binaan-merah2").html("");
+        $(".history-peringatan1-merah2").html("");
+        $(".history-peringatan2-merah2").html("");
+        $(".history-peringatan3-merah2").html("");
+        $(".history-teguran1-merah2").html("");
+        $(".history-teguran2-merah2").html("");
+
+        // BABAK 3
+        $(".history-teguran1-biru3").html("");
+        $(".history-teguran2-biru3").html("");
+        $(".history-peringatan1-biru3").html("");
+        $(".history-peringatan2-biru3").html("");
+        $(".history-peringatan3-biru3").html("");
+        $(".history-binaan-biru3").html("");
+        $(".history-jatuhan-biru3").html("");
+        $(".history-jatuhan-merah3").html("");
+        $(".history-binaan-merah3").html("");
+        $(".history-peringatan1-merah3").html("");
+        $(".history-peringatan2-merah3").html("");
+        $(".history-peringatan3-merah3").html("");
+        $(".history-teguran1-merah3").html("");
+        $(".history-teguran2-merah3").html("");
+
+        $('button[onclick^="button_nilai"]').prop("disabled", true);
+        $(".hapus-skor").prop("disabled", true);
+        $(".verifikasi").prop("disabled", true);
+        $(".pemenang").prop("disabled", true);
+      }
+    }
+
+    const ws = new WebSocket("ws://192.168.30.254:3000");
+
+    function set_winner(sudut) {
+      const konfirmasi = confirm(
+        `Apakah kamu yakin sudut ${sudut.toUpperCase()} menang?`
+      );
+      if (!konfirmasi) return;
+
+      const id_jadwal = localStorage.getItem("partai");
+      const currentPartai = localStorage.getItem("currentPartai");
+      const nilaiakhirbiru = $("#nilai_akhir_biru").text();
+      const nilaiakhirmerah = $("#nilai_akhir_merah").text();
+
+      ws.send(
+        JSON.stringify({
+          type: "winner",
+          sudut,
+          nilai: sudut === "biru" ? nilaiakhirbiru : nilaiakhirmerah,
+          nilai_biru: nilaiakhirbiru,
+          nilai_merah: nilaiakhirmerah,
+          currentPartai,
+        })
+      );
+
+      ws.send(
+        JSON.stringify({
+          type: "set_partai_selesai",
+          partai: id_jadwal,
+        })
+      );
+      $("#pemenangModal").modal("hide");
+      $(".button_nilai, .hapus-skor").prop("disabled", true);
+    }
+
+    function putusanDewan(sudut) {
+      console.log("Putusan dewan", sudut);
+      const judul = $("#judul_keputusan").text();
+      ws.send(
+        JSON.stringify({
+          type: "keputusan_dewan",
+          sudut,
+          judul,
+        })
+      );
+    }
+
+    function button_nilai(nilai, sudut) {
+      const id_juri = localStorage.getItem("juri");
+      const id_jadwal = localStorage.getItem("partai"); // atau key lain sesuai aplikasi
+      const babak = localStorage.getItem("babak"); // misal 1,2,3
+      const bbk = localStorage.getItem("bbk"); // misal 1,2,3
+
+      ws.send(
+        JSON.stringify({
+          type: "nilai_dewan",
+          id_juri,
+          id_jadwal,
+          button: nilai,
+          sudut,
+          babak,
+          bbk,
+        })
+      );
+    }
+
+    function button_hapus(sudut) {
+      const data = {
+        type: "hapus_nilai_dewan",
+        sudut: sudut,
+        id_jadwal: localStorage.getItem("partai"),
+        babak: localStorage.getItem("babak"),
+        bbk: localStorage.getItem("bbk"),
+      };
+
+      // Kirim data melalui WebSocket
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(data));
+        console.log("Perintah hapus dikirim:", data);
+      } else {
+        console.error("WebSocket tidak terhubung!");
+        alert("Koneksi ke server terputus!");
+      }
+    }
+
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    }
+
+    function babakUI(babak) {
+      // Reset semua tombol babak ke style default
+      for (let i = 1; i <= 3; i++) {
+        $(".button-babak" + i)
+          .removeClass("bg-success text-light")
+          .addClass("bg-light text-dark");
+      }
+      // Aktifkan tombol sesuai babak saat ini
+      if (babak >= 1 && babak <= 3) {
+        $(".button-babak" + babak)
+          .addClass("bg-success text-light")
+          .removeClass("bg-light text-dark");
+      }
+    }
+
+    function sendBabakToServer(babak) {
+      ws.readyState === WebSocket.OPEN &&
+        ws.send(
+          JSON.stringify({
+            type: "set_round",
+            round: babak,
+            partai: localStorage.getItem("partai"),
+          })
+        );
+    }
+
+    ws.onopen = () => {
+      console.log("Server terhubung.");
+      sendBabakToServer(localStorage.getItem("babak"));
+      // babakUI(localStorage.getItem('babak'));
+      console.log("Babak", localStorage.getItem("babak"));
+      $(".button_nilai, .hapus-skor").prop("disabled", true);
+      // $('.pemenang').prop('disabled', false);
+
+      const overlay = document.getElementById("verifOverlay");
+      const statusText = document.getElementById("verifStatus");
+      const cancelBtn = document.getElementById("verifCancel");
+
+      $(".winner-biru").text("🏆 WINNER");
+      $(".winner-merah").text("🏆 WINNER");
+
+      $('.winner-biru').prop('disabled', false);
+      $('.winner-merah').prop('disabled', false);
+
+      let currentTimer = null;
+      let currentJenis = null;
+
+      // Pasang listener di setiap tombol-verifikasi
+      document.querySelectorAll(".tombol-send").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          // Jika sudah ada timer, abaikan
+          if (currentTimer) return;
+
+          // Tampilkan overlay
+          statusText.textContent = "Mengirim…";
+          cancelBtn.style.display = "inline-block";
+          overlay.classList.add("show");
+
+          // Mulai timer 2 detik
+          currentTimer = setTimeout(() => {
+            currentJenis = btn.dataset.jenis;
+            console.log(currentJenis);
+            // Kirim ke server
+            ws.send(
+              JSON.stringify({
+                type: "kirim_verifikasi",
+                jenis: currentJenis,
+              })
+            );
+            $("#judul_keputusan").html(
+              'KEPUTUSAN VERIFIKASI <b class="text-uppercase">' +
+              currentJenis +
+              "</b>"
+            );
+
+            // Ubah status jadi Terkirim
+            statusText.textContent = "Menunggu...";
+            cancelBtn.style.display = "none";
+            currentTimer = null;
+
+            // Setelah 1 detik, hide overlay kalau sudah 3 juri
+
+            if (keputusanJuri.length === 3) {
+              overlay.classList.remove("show");
+            }
+          }, 1000);
+        });
+      });
+
+      // Handler Batal
+      cancelBtn.addEventListener("click", () => {
+        if (!currentTimer) return;
+        clearTimeout(currentTimer);
+        currentTimer = null;
+        // Reset overlay
+        overlay.classList.remove("show");
+      });
+
+      const keputusanJuri = [];
+      document.querySelector(".tutup").addEventListener("click", () => {
+        // Pindahkan fokus terlebih dahulu
+        document.activeElement.blur();
+
+        // Kirim status "tutup" ke server
+        console.log("TUTUP");
+        ws.send(
+          JSON.stringify({
+            type: "tutup_verifikasi",
+          })
+        );
+
+        // Kosongkan array keputusanJuri
+        keputusanJuri.length = 0;
+
+        const div1 = document.getElementById("verifikasi-biru");
+        const div2 = document.getElementById("verifikasi-merah");
+        const div3 = document.getElementById("verifikasi-netral");
+        div1.innerHTML = `<div></div>`;
+        div2.innerHTML = `<div></div>`;
+        div3.innerHTML = `<div></div>`;
+        overlay.classList.remove("show");
+        document.getElementById("dewan-actions").style.display = "none";
+      });
+
+      ws.send(
+        JSON.stringify({
+          type: "history_dewan",
+          partai: localStorage.getItem("partai"),
+          babak: localStorage.getItem("babak"),
+          bbk: localStorage.getItem("bbk"),
+        })
+      );
+
+      ws.send(
+        JSON.stringify({
+          type: "history_pemenang",
+          partai: localStorage.getItem("partai"),
+        })
+      );
+
+      function renderPartaiFromStorage() {
+        const raw = localStorage.getItem("currentPartai");
+        if (!raw) return; // belum ada data tersimpan
+
+        try {
+          const p = JSON.parse(raw);
+
+          // Render UI sama seperti di handler partai_data
+          $(".nm_biru").text(p.biru.nama);
+          $(".kontingen_biru").text(p.biru.kontingen);
+          $(".nm_merah").text(p.merah.nama);
+          $(".kontingen_merah").text(p.merah.kontingen);
+
+          $("#juri").text(localStorage.getItem("nama_juri"));
+          $("#gelanggang").text(p.gelanggang + " - " + p.partai);
+          $(".gelanggang").text(p.gelanggang);
+
+          if (p.partai === "?" && localStorage.getItem("babak") === 0) {
+            $(".button_nilai, .hapus-skor").prop("disabled", true);
+          }
+          // babakUI(p.babak);
+          // babakUI(localStorage.getItem('babak'));
+        } catch (e) {
+          console.warn("Gagal parse currentPartai di storage", e);
+        }
+      }
+
+      // Panggil segera saat load halaman
+      renderPartaiFromStorage();
+      // babakUI(localStorage.getItem('babak'));
+
+      function generateBabakRows(jumlahBabak) {
+        const tbody = document.getElementById("tbody-babak");
+        tbody.innerHTML = ""; // reset dulu
+
+        for (let i = 1; i <= jumlahBabak; i++) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+      <td class="text-center fw-bold">
+        <small>
+          <span class="history-teguran1-biru${i}"></span>
+          <span class="history-teguran2-biru${i}"></span>
+        </small>
+      </td>
+      <td class="text-center fw-bold">
+        <small>
+          <span class="history-peringatan1-biru${i}"></span>
+          <span class="history-peringatan2-biru${i}"></span>
+          <span class="history-peringatan3-biru${i} text-danger"></span>
+        </small>
+      </td>
+      <td class="text-center fw-bold">
+        <small class="history-binaan-biru${i} text-success"></small>
+      </td>
+      <td class="text-center fw-bold">
+        <small class="history-jatuhan-biru${i}"></small>
+      </td>
+      <td class="text-center bg-light">
+        <div class="d-grid gap-1">
+          <button class="btn bg-light text-dark button-babak${i}">
+            ${i}
+          </button>
+        </div>
+      </td>
+      <td class="text-center fw-bold">
+        <small class="history-jatuhan-merah${i}"></small>
+      </td>
+      <td class="text-center fw-bold">
+        <small class="history-binaan-merah${i} text-success"></small>
+      </td>
+      <td class="text-center fw-bold">
+        <small>
+          <span class="history-peringatan1-merah${i}"></span>
+          <span class="history-peringatan2-merah${i}"></span>
+          <span class="history-peringatan3-merah${i} text-danger"></span>
+        </small>
+      </td>
+      <td class="text-center fw-bold">
+        <small>
+          <span class="history-teguran1-merah${i}"></span>
+          <span class="history-teguran2-merah${i}"></span>
+        </small>
+      </td>
+    `;
+          tbody.appendChild(tr);
+        }
+      }
+
+      const jumlahBabak = parseInt(localStorage.getItem("jumlahBabak")) || 3;
+      generateBabakRows(jumlahBabak);
+
+      function kelompokkanNilai(data) {
+        return {
+          juri1: {
+            BIRU: data.filter((d) => d.id_juri === "1" && d.sudut === "BIRU"),
+            MERAH: data.filter(
+              (d) => d.id_juri === "1" && d.sudut === "MERAH"
+            ),
+          },
+          juri2: {
+            BIRU: data.filter((d) => d.id_juri === "2" && d.sudut === "BIRU"),
+            MERAH: data.filter(
+              (d) => d.id_juri === "2" && d.sudut === "MERAH"
+            ),
+          },
+          juri3: {
+            BIRU: data.filter((d) => d.id_juri === "3" && d.sudut === "BIRU"),
+            MERAH: data.filter(
+              (d) => d.id_juri === "3" && d.sudut === "MERAH"
+            ),
+          },
+        };
+      }
+
+      ws.onmessage = (event) => {
+        let data = event.data;
+
+        try {
+          const message = JSON.parse(event.data);
+          // Partai
+          if (message.type === "partai_data") {
+            const p = message.data;
+            console.log("Partai data diterima:", p);
+            localStorage.setItem("partai", p.partai);
+            localStorage.setItem("bbk", p.bbk);
+            localStorage.setItem("currentPartai", JSON.stringify(p));
+            // Reset babak ke awal
+            // localStorage.setItem('babak', p.babak);
+            babakUI(p.babak);
+            const jumlahBabak =
+              parseInt(localStorage.getItem("jumlahBabak")) || 3;
+            generateBabakRows(jumlahBabak);
+            // Tampilkan ke DOM
+            $(".nm_biru").text(p.biru.nama);
+            $(".kontingen_biru").text(p.biru.kontingen);
+            $(".nm_merah").text(p.merah.nama);
+            $(".kontingen_merah").text(p.merah.kontingen);
+
+            $("#juri").text(localStorage.getItem("nama_juri"));
+            $("#gelanggang").text(p.gelanggang + " - " + p.partai);
+            // localStorage.setItem('babak', 0);
+            $(".gelanggang").text(p.gelanggang);
+            // babakUI(localStorage.getItem('babak'));
+            if (p.partai === "?") {
+              babakUI();
+            }
+          }
+
+          if (message.type === "status_partai") {
+            console.log(message.status);
+            if (message.status === "selesai") {
+              $("#pemenangModal").modal("show");
+            }
+          }
+
+          if (message.type === "set_jumlah_babak") {
+            console.log(message.jumlah);
+            localStorage.setItem("jumlahBabak", message.jumlah);
+            const jumlahBabak =
+              parseInt(localStorage.getItem("jumlahBabak")) || 3;
+            generateBabakRows(jumlahBabak);
+            babakUI(localStorage.getItem("babak"));
+          }
+
+          if (message.type === "set_diskualifikasi") {
+            const sudut = message.sudut === "BIRU" ? "biru" : "merah";
+            $(".winner-biru").prop("disabled", false);
+            $(".winner-merah").prop("disabled", false);
+            $(".winner-biru").text("🏆 WINNER");
+            $(".winner-merah").text("🏆 WINNER");
+
+            $('.winner-' + sudut).prop('disabled', true);
+            $(".winner-" + sudut).text("DISKUALIFIKASI");
+
+            $("#pemenangModal").modal("show");
+            $(".pemenang").prop("disabled", false);
+          }
+
+          if (message.type === "history_nilai_pemenang") {
+            // Data Sudut Biru
+            document.getElementById("pukulan_biru").innerText =
+              message.nilai_tanding.pukulan.BIRU;
+            document.getElementById("tendangan_biru").innerText =
+              message.nilai_tanding.tendangan.BIRU;
+            document.getElementById("jatuhan_biru").innerText =
+              message.nilai_dewan.jatuhan.BIRU;
+            document.getElementById("binaan_biru").innerText =
+              message.nilai_dewan.binaan.BIRU;
+
+            document.getElementById("teguran1_biru").innerText =
+              message.nilai_dewan.teguran1.BIRU;
+            document.getElementById("teguran2_biru").innerText =
+              message.nilai_dewan.teguran2.BIRU;
+            document.getElementById("peringatan1_biru").innerText =
+              message.nilai_dewan.peringatan1.BIRU;
+            document.getElementById("peringatan2_biru").innerText =
+              message.nilai_dewan.peringatan2.BIRU;
+
+            // Data Sudut Merah
+            document.getElementById("pukulan_merah").innerText =
+              message.nilai_tanding.pukulan.MERAH;
+            document.getElementById("tendangan_merah").innerText =
+              message.nilai_tanding.tendangan.MERAH;
+            document.getElementById("jatuhan_merah").innerText =
+              message.nilai_dewan.jatuhan.MERAH;
+            document.getElementById("binaan_merah").innerText =
+              message.nilai_dewan.binaan.MERAH;
+
+            document.getElementById("teguran1_merah").innerText =
+              message.nilai_dewan.teguran1.MERAH;
+            document.getElementById("teguran2_merah").innerText =
+              message.nilai_dewan.teguran2.MERAH;
+            document.getElementById("peringatan1_merah").innerText =
+              message.nilai_dewan.peringatan1.MERAH;
+            document.getElementById("peringatan2_merah").innerText =
+              message.nilai_dewan.peringatan2.MERAH;
+          }
+
+          if (message.type === "monitor_data") {
+            console.log(message.nilai_biru);
+            console.log(message.nilai_merah);
+            document.getElementById("nilai_akhir_biru").innerText =
+              message.nilai_biru;
+            document.getElementById("nilai_akhir_merah").innerText =
+              message.nilai_merah;
+          }
+
+          if (message.type === "update_nilai_dewan") {
+            localStorage.setItem("babak", message.data.babak);
+          }
+
+          if (message.type === "update_history_dewan") {
+            // console.log("history nilai dewan diupdate" + message.data.entries);
+            const entries = message.data.entries; // ini array murni
+
+            const sudutList = ["BIRU", "MERAH"];
+            const babakList = [1, 2, 3];
+            const tombolMap = {
+              3: "teguran1",
+              4: "teguran2",
+              5: "peringatan1",
+              6: "peringatan2",
+              7: "peringatan3",
+              2: "binaan",
+              1: "jatuhan",
+            };
+
+            sudutList.forEach((sudut) => {
+              babakList.forEach((babak) => {
+                Object.keys(tombolMap).forEach((tombol) => {
+                  // 1) bangun selector-nya
+                  const className = `.history-${tombolMap[tombol]
+                    }-${sudut.toLowerCase()}${babak}`;
+
+                  // 2) filter entries yang cocok
+                  const matched = entries.filter(
+                    (item) =>
+                      item.sudut === sudut &&
+                      Number(item.babak) === babak &&
+                      String(item.button) === tombol
+                  );
+
+                  // 3) ambil nilai dan join
+                  const hasil = matched.map((item) => item.nilai).join("");
+
+                  // 4) tulis ke DOM
+                  $(className).html(hasil);
+                });
+              });
+            });
+          }
+
+          // Babak
+          if (message.type === "babak_data") {
+            localStorage.setItem("babak", message.round);
+            babakUI(localStorage.getItem("babak"));
+          }
+
+          // Timer
+          if (message.type === "tick") {
+            const timerElement = document.getElementById("timer");
+            if (timerElement) {
+              timerElement.textContent = formatTime(message.remaining);
+            }
+
+            $(".button_nilai, .hapus-skor").prop("disabled", false);
+          }
+
+          if (message.type === "stopped") {
+            const timerElement = document.getElementById("timer");
+            if (timerElement) {
+              timerElement.textContent = "02:00";
+            }
+            // $('.button_nilai, .hapus-skor').prop('disabled', true);
+
+            $(".pemenang").prop("disabled", false);
+
+            $(".winner-biru").text("🏆 WINNER");
+            $(".winner-merah").text("🏆 WINNER");
+
+            ws.send(
+              JSON.stringify({
+                type: "set_status_stop",
+                partai: localStorage.getItem("partai"),
+              })
+            );
+          }
+
+          if (message.type === "ended") {
+            if (localStorage.getItem("babak") === 3) {
+              $(".pemenang").prop("disabled", true);
+            }
+          }
+
+          // Optional: bisa juga tampilkan ketika mulai atau dihentikan
+          if (
+            message.type === "started" ||
+            message.type === "paused" ||
+            message.type === "resumed" ||
+            message.type === "stopped" ||
+            message.type === "ended"
+          ) {
+            console.log(
+              "Timer state:",
+              message.type,
+              "remaining:",
+              message.remaining
+            );
+          }
+        } catch (e) {
+          console.warn("Gagal decode non-string payload", data);
+          return;
+        }
+
+        // Buang segala karakter sebelum '{' pertama
+        data = data.trim();
+        const firstBrace = data.indexOf("{");
+        if (firstBrace > 0) {
+          data = data.slice(firstBrace);
+        }
+
+        // Sekarang parse JSON dengan aman
+        let msg;
+
+        try {
+          msg = JSON.parse(data);
+
+          if (msg.type === "verifikasi_keputusan") {
+            const { id_juri, sudut } = msg.data;
+            console.log(`Dewan: Juri ${id_juri} memutuskan ${sudut}`);
+            keputusanJuri.push({ id_juri, sudut });
+            console.log(keputusanJuri);
+            console.log(keputusanJuri.length);
+
+            // Update kolom
+            const div = document.getElementById(
+              "verifikasi-" + sudut.toLowerCase()
+            );
+            // Misal highlight background
+            // 1) Reset isi kolom
+            div.innerHTML = `<div></div>`;
+
+            // 2) Ambil semua juri yang memilih sudut ini
+            const jurus = keputusanJuri
+              .filter((k) => k.sudut === sudut) // sudut = 'BIRU' atau 'MERAH' dll
+              .map((k) => k.id_juri);
+
+            // 3) Tambahkan badge untuk setiap juri
+            jurus.forEach((id) => {
+              const p = document.createElement("div");
+              p.innerHTML = `&#10003; Juri ${id}`; // &#10003; adalah ✓
+              p.style.fontWeight = "bold";
+              p.style.margin = "4px 0";
+              div.appendChild(p);
+            });
+
+            // Jika semua 3 juri sudah isi, tampilkan aksi dewan
+            if (keputusanJuri.length === 3) {
+              document.getElementById("dewan-actions").style.display =
+                "block";
+              // overlay.classList.remove('show');
+            }
+          }
+        } catch (evrnt) {
+          // console.error("Data WebSocket tidak valid JSON:", event.data);
+          return;
+        }
+      };
+    };
+
+    ws.onclose = () => {
+      console.log("Server terputus.");
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+  </script>
+</body>
+
+</html>
