@@ -447,7 +447,11 @@
                                             while ($medali = mysqli_fetch_array($datamedali)) {
                                                 $no++;
                                                 $badgeClass = '';
-                                                switch (strtolower($medali['medali'])) {
+
+                                                // Perbaikan 1: untuk strtolower()
+                                                $medaliType = strtolower($medali['medali'] ?? '');
+
+                                                switch ($medaliType) {
                                                     case 'emas':
                                                         $badgeClass = 'bg-warning text-dark';
                                                         break;
@@ -463,17 +467,21 @@
                                         ?>
                                                 <tr>
                                                     <td class="text-center"><?php echo $no; ?></td>
-                                                    <td class="text-uppercase"><?php echo htmlspecialchars($medali['nama']); ?></td>
-                                                    <td class="text-uppercase"><?php echo htmlspecialchars($medali['kontingen']); ?></td>
-                                                    <td class="text-uppercase"><?php echo htmlspecialchars($medali['kelas']); ?></td>
+                                                    <!-- Perbaikan 2: untuk htmlspecialchars() -->
+                                                    <td class="text-uppercase"><?php echo htmlspecialchars($medali['nama'] ?? ''); ?></td>
+                                                    <td class="text-uppercase"><?php echo htmlspecialchars($medali['kontingen'] ?? ''); ?></td>
+                                                    <td class="text-uppercase"><?php echo htmlspecialchars($medali['kelas'] ?? ''); ?></td>
                                                     <td>
-                                                        <span class="badge <?php echo $badgeClass; ?>"><?php echo htmlspecialchars($medali['medali']); ?></span>
+                                                        <span class="badge <?php echo $badgeClass; ?>">
+                                                            <!-- Perbaikan 3: untuk medali -->
+                                                            <?php echo htmlspecialchars($medali['medali'] ?? 'Tidak ada'); ?>
+                                                        </span>
                                                     </td>
                                                     <td>
                                                         <button class="btn btn-danger btn-sm btn-delete-medali"
                                                             data-id="<?php echo $medali['id_medali']; ?>"
-                                                            data-name="<?php echo htmlspecialchars($medali['nama']); ?>"
-                                                            data-medali="<?php echo htmlspecialchars($medali['medali']); ?>"
+                                                            data-name="<?php echo htmlspecialchars($medali['nama'] ?? ''); ?>"
+                                                            data-medali="<?php echo htmlspecialchars($medali['medali'] ?? ''); ?>"
                                                             data-partai="<?php echo $medali['id_partai_FK']; ?>">
                                                             <i class="halflings-icon white trash"></i> Hapus
                                                         </button>

@@ -19894,21 +19894,25 @@ div.tagsinput {
 /*-------------------------------------------------------------------*/
 /* === Landing screens === */
 /* Auth */
-.auth.login-bg {
-  background: url("../images/auth/Login_bg.jpg");
+/* .auth.login-bg {
+  background: url("../images/auth/bg.jpg");
+  background-attachment: fixed;
   background-size: cover; }
 
 .auth .login-half-bg {
-  background: url("../images/auth/login-bg.jpg");
+  background: url("../images/auth/bg.jpg");
+  background-attachment: fixed;
   background-size: cover; }
 
 .auth.register-half-bg {
-  background: url("../images/auth/Login_bg2.jpg");
+  background: url("../images/auth/bg.jpg");
+  background-attachment: fixed;
   background-size: cover; }
 
 .auth.lock-full-bg {
-  background: url("../images/auth/lockscreen-bg.jpg");
-  background-size: cover; }
+  background: url("../images/auth/bg.jpg");
+  background-attachment: fixed;
+  background-size: cover; } */
 
 .auth .lock-profile-img {
   width: 90px;

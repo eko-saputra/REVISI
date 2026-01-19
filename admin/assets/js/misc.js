@@ -1,18 +1,16 @@
 (function($) {
   'use strict';
-  $(function() {
+  
+  $(document).ready(function() {
+    // Inisialisasi variabel
     var body = $('body');
-    var contentWrapper = $('.content-wrapper');
-    var scroller = $('.container-scroller');
-    var footer = $('.footer');
     var sidebar = $('.sidebar');
-
-    //Add active class to nav-link based on url dynamically
-    //Active class can be hard coded directly in html file also as required
-
+    
+    // Fungsi untuk active class
     function addActiveClass(element) {
+      var current = location.pathname.split("/").slice(-1)[0].replace(/^\/|\/$/g, '');
+      
       if (current === "") {
-        //for root url
         if (element.attr('href').indexOf("index.html") !== -1) {
           element.parents('.nav-item').last().addClass('active');
           if (element.parents('.sub-menu').length) {
@@ -21,139 +19,54 @@
           }
         }
       } else {
-        //for other url
         if (element.attr('href').indexOf(current) !== -1) {
           element.parents('.nav-item').last().addClass('active');
           if (element.parents('.sub-menu').length) {
             element.closest('.collapse').addClass('show');
             element.addClass('active');
           }
-          if (element.parents('.submenu-item').length) {
-            element.addClass('active');
-          }
         }
       }
     }
-
-    var current = location.pathname.split("/").slice(-1)[0].replace(/^\/|\/$/g, '');
-    $('.nav li a', sidebar).each(function() {
-      var $this = $(this);
-      addActiveClass($this);
-    })
-
-    $('.horizontal-menu .nav li a').each(function() {
-      var $this = $(this);
-      addActiveClass($this);
-    })
-
-    //Close other submenu in sidebar on opening any
-
-    sidebar.on('show.bs.collapse', '.collapse', function() {
-      sidebar.find('.collapse.show').collapse('hide');
+    
+    // Apply active class to menu items
+    $('.nav li a').each(function() {
+      addActiveClass($(this));
     });
-
-
-    //Change sidebar and content-wrapper height
-    applyStyles();
-
-    function applyStyles() {
-      //Applying perfect scrollbar
-      if (!body.hasClass("rtl")) {
-        if ($('.settings-panel .tab-content .tab-pane.scroll-wrapper').length) {
-          const settingsPanelScroll = new PerfectScrollbar('.settings-panel .tab-content .tab-pane.scroll-wrapper');
-        }
-        if ($('.chats').length) {
-          const chatsScroll = new PerfectScrollbar('.chats');
-        }
-        if (body.hasClass("sidebar-fixed")) {
-          var fixedSidebarScroll = new PerfectScrollbar('#sidebar .nav');
-        }
-      }
-    }
-
+    
+    // Toggle sidebar minimize
     $('[data-toggle="minimize"]').on("click", function() {
-      if ((body.hasClass('sidebar-toggle-display')) || (body.hasClass('sidebar-absolute'))) {
-        body.toggleClass('sidebar-hidden');
-      } else {
-        body.toggleClass('sidebar-icon-only');
-      }
+      body.toggleClass('sidebar-icon-only');
     });
-
-    //checkbox and radios
-    $(".form-check label,.form-radio label").append('<i class="input-helper"></i>');
-
-    //fullscreen
-        //fullscreen
-    $("#fullscreen-button").on("click", function toggleFullScreen() {
-      if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
-        if (document.documentElement.requestFullScreen) {
-          document.documentElement.requestFullScreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-          document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullScreen) {
-          document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-        } else if (document.documentElement.msRequestFullscreen) {
-          document.documentElement.msRequestFullscreen();
-        }
+    
+    // Fullscreen toggle
+    $("#fullscreen-button").on("click", function() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.log(`Error attempting to enable fullscreen: ${err.message}`);
+        });
       } else {
-        if (document.cancelFullScreen) {
-          document.cancelFullScreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.webkitCancelFullScreen) {
-          document.webkitCancelFullScreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
         }
       }
     });
-
-    // FIXED: Check if #proBanner exists before manipulating it
-    var proBanner = document.querySelector('#proBanner');
-    var bannerClose = document.querySelector('#bannerClose');
     
-    if (proBanner) {
-      if ($.cookie('corona-free-banner')!="true") {
-        proBanner.classList.add('d-flex');
-      }
-      else {
-        proBanner.classList.add('d-none');
+    // Banner cookie
+    var proBanner = $('#proBanner');
+    if (proBanner.length) {
+      if ($.cookie('corona-free-banner') !== "true") {
+        proBanner.addClass('d-flex');
+      } else {
+        proBanner.addClass('d-none');
       }
       
-      if (bannerClose) {
-        bannerClose.addEventListener('click',function() {
-          proBanner.classList.add('d-none');
-          proBanner.classList.remove('d-flex');
-          var date = new Date();
-          date.setTime(date.getTime() + 24 * 60 * 60 * 1000); 
-          $.cookie('corona-free-banner', "true", { expires: date });
-        });
-      }
-    }
-  });
-})(jQuery);
-
-    // FIXED: Check if #proBanner exists before manipulating it
-    var proBanner = document.querySelector('#proBanner');
-    var bannerClose = document.querySelector('#bannerClose');
-    
-    if (proBanner) {
-      if ($.cookie('corona-free-banner')!="true") {
-        proBanner.classList.add('d-flex');
-      }
-      else {
-        proBanner.classList.add('d-none');
-      }
-      
-      if (bannerClose) {
-        bannerClose.addEventListener('click',function() {
-          proBanner.classList.add('d-none');
-          proBanner.classList.remove('d-flex');
-          var date = new Date();
-          date.setTime(date.getTime() + 24 * 60 * 60 * 1000); 
-          $.cookie('corona-free-banner', "true", { expires: date });
-        });
-      }
+      $('#bannerClose').on('click', function() {
+        proBanner.removeClass('d-flex').addClass('d-none');
+        var date = new Date();
+        date.setTime(date.getTime() + 24 * 60 * 60 * 1000);
+        $.cookie('corona-free-banner', "true", { expires: date });
+      });
     }
   });
 })(jQuery);
